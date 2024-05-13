@@ -6,6 +6,7 @@ import br.com.cps.forum.dto.AnswerView
 import br.com.cps.forum.dto.AnswersView
 import br.com.cps.forum.service.AnswerService
 import jakarta.validation.Valid
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.web.bind.annotation.*

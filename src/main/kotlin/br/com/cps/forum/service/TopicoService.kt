@@ -8,6 +8,9 @@ import br.com.cps.forum.mapper.TopicosFormMapper
 import br.com.cps.forum.mapper.TopicosViewMapper
 import br.com.cps.forum.model.Topicos
 import br.com.cps.forum.repository.TopicoRepository
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.CachePut
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -21,7 +24,7 @@ class TopicoService(
     private val mapperToForm: TopicosFormMapper,
     private val mapperToView: TopicosViewMapper
 ) {
-    //    @Cacheable(value = ["Topicos"], key = "#root.method.name")
+//    @Cacheable(cacheNames = ["Topicos"])
     fun listTopicos(
         topicoName: String?,
         page: Pageable
@@ -32,22 +35,23 @@ class TopicoService(
             repository.findAll(page)
         }
 
-        return topicos.map {
-            mapperToView.map(it)
-        }
+        return mapperToView.mapToPage(topicos)
     }
 
+//    @Cacheable(cacheNames = ["Topicos"], key = "#id")
     fun getById(id: Long): TopicosView {
         val topicoByid = findByTopico(id)
         return mapperToView.map(topicoByid)
     }
 
+//    @CacheEvict(cacheNames = ["Topicos", "Answer"], allEntries = true)
     fun createdTopicos(dtoTopico: TopicosForm): TopicosView {
         val toMapper = mapperToForm.map(dtoTopico)
         val created = repository.save(toMapper)
         return mapperToView.map(created)
     }
 
+//    @CachePut(cacheNames = ["Topicos", "Answer"], key = "#dtoTopico.id")
     fun updatedTopico(dtoTopico: UpdateTopicosForm): TopicosView {
         val existingTopico = findByTopico(dtoTopico.id)
 
@@ -63,6 +67,7 @@ class TopicoService(
         return mapperToView.map(existingTopico)
     }
 
+//    @CacheEvict(cacheNames = ["Topicos", "Answer"], allEntries = true)
     fun deletedTopico(id: Long) {
         return repository.deleteById(id)
     }

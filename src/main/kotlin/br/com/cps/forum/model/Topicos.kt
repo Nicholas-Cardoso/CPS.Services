@@ -3,6 +3,7 @@ package br.com.cps.forum.model
 import br.com.cps.forum.enum.Privacy
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
+import java.io.Serializable
 import java.time.LocalDateTime
 
 @Entity
@@ -22,4 +23,4 @@ data class Topicos(
     val answer: List<Answers>? = null,
     val created_at: LocalDateTime = LocalDateTime.now(),
     var updated_at: LocalDateTime = LocalDateTime.now(),
-)
+) : Serializable

@@ -10,3 +10,9 @@ spring:
       hibernate:
         show-sql: true
         format_sql: true
+#  cache:
+#    type: redis
+#  redis:
+#    host:
+#    port:
+#    time-to-live: 60000

@@ -6,7 +6,7 @@ import br.com.cps.forum.model.Answers
 import org.springframework.stereotype.Component
 
 @Component
-class AnswerViewMapper: Mapper<Answers, AnswersView> {
+class AnswerViewMapper : Mapper<Answers, AnswersView> {
     override fun map(t: Answers): AnswersView {
         return AnswersView(
             id = t.id,
@@ -14,6 +14,17 @@ class AnswerViewMapper: Mapper<Answers, AnswersView> {
             topicoId = t.topico.id,
             userId = t.user.id
         )
+    }
+
+    fun mapToAnswersList(tList: List<Answers>?): List<AnswersView> {
+        return tList!!.map { t ->
+            AnswersView(
+                id = t.id,
+                answerBody = t.answerBody,
+                topicoId = t.topico.id,
+                userId = t.user.id
+            )
+        }
     }
 
     fun mapToAnswer(t: Answers): AnswerView {

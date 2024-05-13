@@ -2,6 +2,7 @@ package br.com.cps.forum.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
+import java.io.Serializable
 
 @Entity
 data class Answers(
@@ -15,7 +16,8 @@ data class Answers(
     @JsonIgnore
     val user: Usuario,
     @ManyToOne
-    val answerFather: Answers? = null,
+    @JsonIgnore
+    var answerFather: Answers? = null,
     @OneToMany(mappedBy = "answerFather")
     val answerChild: MutableList<Answers> = mutableListOf()
-)
+) : Serializable

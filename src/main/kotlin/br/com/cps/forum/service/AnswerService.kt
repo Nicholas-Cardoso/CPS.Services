@@ -13,11 +13,16 @@ import br.com.cps.forum.model.Answers
 import br.com.cps.forum.repository.AnswerRepository
 import br.com.cps.forum.repository.TopicoRepository
 import br.com.cps.forum.repository.UsuarioRepository
+import org.springframework.cache.annotation.CacheEvict
+import org.springframework.cache.annotation.CachePut
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 private const val notFound: String = "Resposta não encontrada."
+private const val topicoIdIsDifferent: String = "O topicoId não pode ser diferente do topicoId do parent."
 
 @Service
 class AnswerService(
@@ -27,6 +32,7 @@ class AnswerService(
     private val mapperToView: AnswerViewMapper,
     private val mapperToForm: AnswerFormMapper
 ) {
+//    @Cacheable(cacheNames = ["Answer"])
     fun listAnswers(topicoId: Long?, page: Pageable): Page<AnswersView> {
         val answers = if (topicoId != null) {
             repository.findByTopicoId(topicoId, page)
@@ -34,21 +40,31 @@ class AnswerService(
             repository.findAll(page)
         }
 
-        return answers.map {
-            val answerView = mapperToView.map(it)
-            answerView.copy(answerChild = getChildrenAnswers(it.id))
-        }
+        val resultList = answers.map { answer ->
+            val processedIds = mutableSetOf<Long>()
+            val answerView = mapperToView.map(answer)
+            val topicoIdCorrected = topicoId ?: answer.topico.id
+            answerView.copy(topicoId = topicoIdCorrected, answerChild = getChildrenAnswers(answer.id, processedIds))
+        }.toList()
+
+        return PageImpl(resultList, page, answers.totalElements)
     }
 
+//    @Cacheable(cacheNames = ["Answer"], key = "#id")
     fun getById(id: Long): AnswerView {
         val answer = findByAnswer(id)
         return mapperToView.mapToAnswer(answer)
     }
 
+//    @CacheEvict(cacheNames = ["Answer", "Topicos"], allEntries = true)
+    @Throws(NotFoundException::class)
     fun createAnswer(answerForm: AnswerForm, parentId: Long?): AnswerView {
         when {
             parentId != null -> {
                 val parentAnswer = findByAnswer(parentId)
+                if (parentAnswer.topico.id!! != answerForm.topicoId) {
+                    throw NotFoundException(topicoIdIsDifferent)
+                }
                 val answers: Answers = Answers(
                     topico = answerForm.getTopicoById(topicoRepository, answerForm.topicoId),
                     user = answerForm.getUserById(userRepository, answerForm.userId),
@@ -68,6 +84,7 @@ class AnswerService(
         }
     }
 
+//    @CachePut(cacheNames = ["Answer", "Topicos"], key = "#answerUpdate.id")
     fun updateAnswer(answerUpdate: AnswerUpdateForm): AnswerView {
         val existingAnswer = findByAnswer(answerUpdate.id)
         answerUpdate.let {
@@ -78,8 +95,32 @@ class AnswerService(
         return mapperToView.mapToAnswer(existingAnswer)
     }
 
+//    @CacheEvict(cacheNames = ["Answer", "Topicos"], allEntries = true)
     fun deleteAnswer(id: Long) {
         return repository.deleteById(id)
+    }
+
+    private fun getChildrenAnswers(parentId: Long?, processedIds: MutableSet<Long>): List<AnswersView> {
+        val children = repository.findByAnswerFatherId(parentId)
+        val result = mutableListOf<AnswersView>()
+
+        for (child in children) {
+            if (!processedIds.contains(child.id)) {
+                processedIds.add(child.id!!)
+
+                val answerChild = getChildrenAnswers(child.id, processedIds)
+                result.add(
+                    AnswersView(
+                        id = child.id,
+                        answerBody = child.answerBody,
+                        topicoId = child.topico.id,
+                        userId = child.user.id,
+                        answerChild = answerChild
+                    )
+                )
+            }
+        }
+        return result
     }
 
     private fun findByAnswer(id: Long): Answers {
@@ -87,19 +128,5 @@ class AnswerService(
             .orElseThrow {
                 NotFoundException(notFound)
             }
-    }
-
-    private fun getChildrenAnswers(parentId: Long?): List<AnswersView> {
-        val children = repository.findByAnswerFatherId(parentId)
-        return children.map {
-            val answerChild = getChildrenAnswers(it.id)
-            AnswersView(
-                id = it.id,
-                answerBody = it.answerBody,
-                topicoId = it.topico.id,
-                userId = it.user.id,
-                answerChild = answerChild
-            )
-        }
     }
 }
