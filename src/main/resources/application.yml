@@ -1,18 +1,3 @@
 spring:
-  datasource:
-    driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/cpsforum
-    username: root
-    password: root
-  jpa:
-    hibernate.ddl-auto: update
-    properties:
-      hibernate:
-        show-sql: true
-        format_sql: true
-#  cache:
-#    type: redis
-#  redis:
-#    host:
-#    port:
-#    time-to-live: 60000
+  profiles:
+    active: @activatedProperties@

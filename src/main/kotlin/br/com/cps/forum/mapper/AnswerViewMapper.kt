@@ -16,23 +16,13 @@ class AnswerViewMapper : Mapper<Answers, AnswersView> {
         )
     }
 
-    fun mapToAnswersList(tList: List<Answers>?): List<AnswersView> {
-        return tList!!.map { t ->
-            AnswersView(
-                id = t.id,
-                answerBody = t.answerBody,
-                topicoId = t.topico.id,
-                userId = t.user.id
-            )
-        }
-    }
-
     fun mapToAnswer(t: Answers): AnswerView {
         return AnswerView(
             id = t.id,
             answerBody = t.answerBody,
             topico = t.topico,
-            user = t.user
+            user = t.user,
+            answerChild = t.answerChild
         )
     }
 }

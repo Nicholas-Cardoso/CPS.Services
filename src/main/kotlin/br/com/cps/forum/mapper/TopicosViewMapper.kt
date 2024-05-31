@@ -5,18 +5,14 @@ import br.com.cps.forum.model.Topicos
 import br.com.cps.forum.service.AnswerService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Component
-
-private val page: Pageable = PageRequest.of(0, 10)
 
 @Component
 class TopicosViewMapper(
-    private val answer: AnswerService,
-    private val mapperToView: AnswerViewMapper
+    private val answer: AnswerService
 ) : Mapper<Topicos, TopicosView> {
     override fun map(t: Topicos): TopicosView {
+        val answersToList = answer.listAnswers(t.id)
         return TopicosView(
             id = t.id,
             title = t.title,
@@ -24,7 +20,7 @@ class TopicosViewMapper(
             section = t.section,
             body = t.body,
             tag = t.tag,
-            answer = mapperToView.mapToAnswersList(t.answer),
+            answer = answersToList.toList(),
             user = t.user,
             created_at = t.created_at,
             updated_at = t.updated_at
@@ -33,7 +29,7 @@ class TopicosViewMapper(
 
     fun mapToPage(t: Page<Topicos>): Page<TopicosView> {
         val topicosViewList = t.content.map { topico ->
-            val answersToList = answer.listAnswers(topico.id, page)
+            val answersToList = answer.listAnswers(topico.id)
             TopicosView(
                 id = topico.id,
                 title = topico.title,

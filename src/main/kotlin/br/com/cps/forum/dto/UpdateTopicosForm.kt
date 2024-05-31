@@ -1,6 +1,6 @@
 package br.com.cps.forum.dto
 
-import br.com.cps.forum.enum.Privacy
+import br.com.cps.forum.model.enum.Privacy
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 import org.jetbrains.annotations.NotNull

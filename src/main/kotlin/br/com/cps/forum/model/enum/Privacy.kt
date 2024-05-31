@@ -1,4 +1,4 @@
-package br.com.cps.forum.enum
+package br.com.cps.forum.model.enum
 
 enum class Privacy {
     PUBLIC,

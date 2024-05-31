@@ -7,13 +7,13 @@ import br.com.cps.forum.exception.NotFoundException
 import br.com.cps.forum.mapper.TopicosFormMapper
 import br.com.cps.forum.mapper.TopicosViewMapper
 import br.com.cps.forum.model.Topicos
+import br.com.cps.forum.network.api.MailService
 import br.com.cps.forum.repository.TopicoRepository
-import org.springframework.cache.annotation.CacheEvict
-import org.springframework.cache.annotation.CachePut
-import org.springframework.cache.annotation.Cacheable
+import br.com.cps.forum.until.builderMailTopico
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
+import java.net.SocketTimeoutException
 import java.time.LocalDateTime
 
 private const val notFoundMessage: String = "Tópico não encontrado."
@@ -22,36 +22,44 @@ private const val notFoundMessage: String = "Tópico não encontrado."
 class TopicoService(
     private val repository: TopicoRepository,
     private val mapperToForm: TopicosFormMapper,
-    private val mapperToView: TopicosViewMapper
+    private val mapperToView: TopicosViewMapper,
+    private val mailService: MailService
 ) {
-//    @Cacheable(cacheNames = ["Topicos"])
+    //    @Cacheable(cacheNames = ["Topicos"])
     fun listTopicos(
         topicoName: String?,
         page: Pageable
     ): Page<TopicosView> {
-        val topicos = if (topicoName != null) {
+        val topicos = topicoName?.let {
             repository.findByTitle(topicoName, page)
-        } else {
-            repository.findAll(page)
-        }
+        } ?: repository.findAll(page)
 
         return mapperToView.mapToPage(topicos)
     }
 
-//    @Cacheable(cacheNames = ["Topicos"], key = "#id")
+    //    @Cacheable(cacheNames = ["Topicos"], key = "#id")
     fun getById(id: Long): TopicosView {
         val topicoByid = findByTopico(id)
         return mapperToView.map(topicoByid)
     }
 
-//    @CacheEvict(cacheNames = ["Topicos", "Answer"], allEntries = true)
+    //    @CacheEvict(cacheNames = ["Topicos", "Answer"], allEntries = true)
     fun createdTopicos(dtoTopico: TopicosForm): TopicosView {
         val toMapper = mapperToForm.map(dtoTopico)
         val created = repository.save(toMapper)
-        return mapperToView.map(created)
+        val topicView = mapperToView.map(created)
+
+        try {
+            val builder = builderMailTopico(created.user)
+            mailService.sendMails(builder).execute()
+        } catch (e: SocketTimeoutException) {
+            println(e.message)
+        }
+
+        return topicView
     }
 
-//    @CachePut(cacheNames = ["Topicos", "Answer"], key = "#dtoTopico.id")
+    //    @CachePut(cacheNames = ["Topicos", "Answer"], key = "#dtoTopico.id")
     fun updatedTopico(dtoTopico: UpdateTopicosForm): TopicosView {
         val existingTopico = findByTopico(dtoTopico.id)
 
@@ -67,9 +75,10 @@ class TopicoService(
         return mapperToView.map(existingTopico)
     }
 
-//    @CacheEvict(cacheNames = ["Topicos", "Answer"], allEntries = true)
+    //    @CacheEvict(cacheNames = ["Topicos", "Answer"], allEntries = true)
     fun deletedTopico(id: Long) {
-        return repository.deleteById(id)
+        val findTopico = findByTopico(id)
+        return repository.deleteById(findTopico.id!!)
     }
 
     private fun findByTopico(id: Long): Topicos {

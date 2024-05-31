@@ -18,6 +18,6 @@ data class Answers(
     @ManyToOne
     @JsonIgnore
     var answerFather: Answers? = null,
-    @OneToMany(mappedBy = "answerFather")
+    @OneToMany(mappedBy = "answerFather", cascade = [CascadeType.ALL])
     val answerChild: MutableList<Answers> = mutableListOf()
 ) : Serializable

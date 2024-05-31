@@ -1,6 +1,6 @@
 package br.com.cps.forum.model
 
-import br.com.cps.forum.enum.Privacy
+import br.com.cps.forum.model.enum.Privacy
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import java.io.Serializable
