@@ -68,13 +68,6 @@
             <version>8.0.33</version>
         </dependency>
 
-        <!--Redis-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-            <version>3.2.5</version>
-        </dependency>
-
         <!--Retrofit-->
         <dependency>
             <groupId>com.squareup.retrofit2</groupId>

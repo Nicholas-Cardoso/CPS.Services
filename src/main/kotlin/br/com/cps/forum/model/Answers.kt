@@ -14,7 +14,7 @@ data class Answers(
     val topico: Topicos,
     @ManyToOne
     @JsonIgnore
-    val user: Usuario,
+    val user: User,
     @ManyToOne
     @JsonIgnore
     var answerFather: Answers? = null,

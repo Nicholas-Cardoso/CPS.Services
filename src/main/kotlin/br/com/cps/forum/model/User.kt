@@ -7,11 +7,11 @@ import jakarta.persistence.Id
 import java.io.Serializable
 
 @Entity
-data class Usuario(
+data class User(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
     val idGraph: Long? = null,
     val email: String,
     var firstName: String,
-    var lastName: String
+    var lastName: String,
 ) : Serializable

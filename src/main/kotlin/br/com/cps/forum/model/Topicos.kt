@@ -17,7 +17,7 @@ data class Topicos(
     var tag: String,
     @ManyToOne
     @JsonIgnore
-    val user: Usuario,
+    val user: User,
     @OneToMany(mappedBy = "topico", cascade = [CascadeType.ALL], orphanRemoval = true)
     @JsonIgnore
     val answer: List<Answers>? = null,

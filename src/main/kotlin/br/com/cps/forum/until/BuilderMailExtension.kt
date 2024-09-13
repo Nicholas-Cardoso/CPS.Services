@@ -1,9 +1,9 @@
 package br.com.cps.forum.until
 
 import br.com.cps.forum.dto.MailForm
-import br.com.cps.forum.model.Usuario
+import br.com.cps.forum.model.User
 
-fun builderMailTopico(model: Usuario): MailForm {
+fun builderMailTopico(model: User): MailForm {
     return MailForm(
         email = model.email,
         subject = "Confirmação de Nova Postagem no CPS Fórum",

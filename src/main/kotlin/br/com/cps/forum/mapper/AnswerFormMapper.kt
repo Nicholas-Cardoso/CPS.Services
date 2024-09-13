@@ -5,13 +5,13 @@ import br.com.cps.forum.extension.getTopicoById
 import br.com.cps.forum.extension.getUserById
 import br.com.cps.forum.model.Answers
 import br.com.cps.forum.repository.TopicoRepository
-import br.com.cps.forum.repository.UsuarioRepository
+import br.com.cps.forum.repository.UserRepository
 import org.springframework.stereotype.Component
 
 @Component
 class AnswerFormMapper(
     private val topicoRepository: TopicoRepository,
-    private val userRepository: UsuarioRepository
+    private val userRepository: UserRepository
 ) : Mapper<AnswerForm, Answers> {
     override fun map(t: AnswerForm): Answers {
         return Answers(

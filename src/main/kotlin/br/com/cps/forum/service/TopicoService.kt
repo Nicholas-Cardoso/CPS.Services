@@ -25,7 +25,6 @@ class TopicoService(
     private val mapperToView: TopicosViewMapper,
     private val mailService: MailService
 ) {
-    //    @Cacheable(cacheNames = ["Topicos"])
     fun listTopicos(
         topicoName: String?,
         page: Pageable
@@ -37,13 +36,11 @@ class TopicoService(
         return mapperToView.mapToPage(topicos)
     }
 
-    //    @Cacheable(cacheNames = ["Topicos"], key = "#id")
     fun getById(id: Long): TopicosView {
         val topicoByid = findByTopico(id)
         return mapperToView.map(topicoByid)
     }
 
-    //    @CacheEvict(cacheNames = ["Topicos", "Answer"], allEntries = true)
     fun createdTopicos(dtoTopico: TopicosForm): TopicosView {
         val toMapper = mapperToForm.map(dtoTopico)
         val created = repository.save(toMapper)
@@ -59,7 +56,6 @@ class TopicoService(
         return topicView
     }
 
-    //    @CachePut(cacheNames = ["Topicos", "Answer"], key = "#dtoTopico.id")
     fun updatedTopico(dtoTopico: UpdateTopicosForm): TopicosView {
         val existingTopico = findByTopico(dtoTopico.id)
 
@@ -75,7 +71,6 @@ class TopicoService(
         return mapperToView.map(existingTopico)
     }
 
-    //    @CacheEvict(cacheNames = ["Topicos", "Answer"], allEntries = true)
     fun deletedTopico(id: Long) {
         val findTopico = findByTopico(id)
         return repository.deleteById(findTopico.id!!)

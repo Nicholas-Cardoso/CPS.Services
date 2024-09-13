@@ -12,7 +12,7 @@ import br.com.cps.forum.mapper.AnswerViewMapper
 import br.com.cps.forum.model.Answers
 import br.com.cps.forum.repository.AnswerRepository
 import br.com.cps.forum.repository.TopicoRepository
-import br.com.cps.forum.repository.UsuarioRepository
+import br.com.cps.forum.repository.UserRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
@@ -25,12 +25,11 @@ private const val topicoIdIsDifferent: String = "O topicoId não pode ser difere
 @Service
 class AnswerService(
     private val repository: AnswerRepository,
-    private val userRepository: UsuarioRepository,
+    private val userRepository: UserRepository,
     private val topicoRepository: TopicoRepository,
     private val mapperToView: AnswerViewMapper,
     private val mapperToForm: AnswerFormMapper
 ) {
-    //    @Cacheable(cacheNames = ["Answer"])
     fun listAnswers(topicoId: Long?, page: Pageable = PageRequest.of(0, 10)): Page<AnswersView> {
         val answers = if (topicoId != null) {
             repository.findByTopicoId(topicoId, page)
@@ -48,13 +47,11 @@ class AnswerService(
         return PageImpl(resultList, page, answers.totalElements)
     }
 
-    //    @Cacheable(cacheNames = ["Answer"], key = "#id")
     fun getById(id: Long): AnswerView {
         val answer = findByAnswer(id)
         return mapperToView.mapToAnswer(answer)
     }
 
-    //    @CacheEvict(cacheNames = ["Answer", "Topicos"], allEntries = true)
     @Throws(NotFoundException::class)
     fun createAnswer(answerForm: AnswerForm, parentId: Long?): AnswerView {
         when {
@@ -82,7 +79,6 @@ class AnswerService(
         }
     }
 
-    //    @CachePut(cacheNames = ["Answer", "Topicos"], key = "#answerUpdate.id")
     fun updateAnswer(answerUpdate: AnswerUpdateForm): AnswerView {
         val existingAnswer = findByAnswer(answerUpdate.id)
         answerUpdate.let {
@@ -93,7 +89,6 @@ class AnswerService(
         return mapperToView.mapToAnswer(existingAnswer)
     }
 
-    //    @CacheEvict(cacheNames = ["Answer", "Topicos"], allEntries = true)
     fun deleteAnswer(id: Long) {
         val findId = findByAnswer(id)
         return repository.deleteById(findId.id!!)
