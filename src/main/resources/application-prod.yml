@@ -13,3 +13,5 @@ spring:
 service:
   mail:
     url:
+jwt:
+  secret:
