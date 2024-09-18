@@ -1,6 +1,8 @@
 package br.com.cps.forum.service
 
 import br.com.cps.forum.dto.UserEmailForm
+import br.com.cps.forum.dto.UserToBlockForm
+import br.com.cps.forum.dto.UserView
 import br.com.cps.forum.exception.NotFoundException
 import br.com.cps.forum.mapper.UserViewMapper
 import br.com.cps.forum.model.User
@@ -22,13 +24,21 @@ class UserService(
         return UserDetail(user)
     }
 
-    fun getUserByEmail(user: UserEmailForm): User? {
-        return repository.findByEmail(user.email)
+    fun getUserByEmail(user: UserEmailForm): UserView? {
+        return repository.findByEmail(user.email)?.let {
+            userToView.map(it)
+        }
     }
 
     fun getById(id: Long): User {
         return repository.findById(id).orElseThrow {
             NotFoundException(message)
         }
+    }
+
+    fun blockUser(userToBlock: UserToBlockForm): UserView {
+        val user = repository.findByEmail(userToBlock.userEmail)?.copy(isBlockedUser = true)
+
+
     }
 }

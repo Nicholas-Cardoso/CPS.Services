@@ -11,8 +11,10 @@ data class Role(
     private val name: String,
 
     @JsonIgnore
-    @OneToMany(mappedBy = "role")
+    @ManyToMany(mappedBy = "role")
     val user: List<User> = mutableListOf()
 ) : GrantedAuthority {
     override fun getAuthority() = name
+
+    fun getName() = name
 }

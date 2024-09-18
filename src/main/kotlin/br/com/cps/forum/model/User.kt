@@ -14,13 +14,15 @@ data class User(
     var firstName: String,
     var lastName: String,
     val isBlockedUser: Boolean = false,
+    val reasonBlock: String? = null,
+    val blockedBy: String? = null,
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "user_role",
         joinColumns = [JoinColumn(name = "user_id")],
         inverseJoinColumns = [JoinColumn(name = "role_id")]
     )
-    val role: Role
+    val role: List<Role> = mutableListOf()
 ) : Serializable
