@@ -28,8 +28,9 @@ class SecurityConfiguration(
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http.csrf { it.disable() }
             .authorizeHttpRequests { requests ->
-                requests.requestMatchers("/topicos").hasAuthority("ADMIN")
-                    .requestMatchers("/answer").hasAuthority("ADMIN")
+                requests.requestMatchers("/user-result").hasAuthority("ADMIN")
+                    .requestMatchers("/topicos").hasAuthority("USER")
+                    .requestMatchers("/answer").hasAuthority("USER")
                     .requestMatchers(HttpMethod.POST, "/login").permitAll()
                     .anyRequest().authenticated()
             }

@@ -1,12 +1,13 @@
 package br.com.cps.forum.service
 
 import br.com.cps.forum.model.User
+import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 class UserDetail(
     private val user: User
 ) : UserDetails {
-    override fun getAuthorities() = user.role
+    override fun getAuthorities(): Collection<GrantedAuthority> = listOf(user.role)
 
     override fun getPassword(): String = user.password
 
