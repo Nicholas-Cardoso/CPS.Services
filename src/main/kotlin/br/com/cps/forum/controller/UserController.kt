@@ -2,6 +2,7 @@ package br.com.cps.forum.controller
 
 import br.com.cps.forum.dto.UserEmailForm
 import br.com.cps.forum.dto.UserToBlockForm
+import br.com.cps.forum.dto.UserToUnblockForm
 import br.com.cps.forum.dto.UserView
 import br.com.cps.forum.service.UserService
 import jakarta.validation.Valid
@@ -15,6 +16,10 @@ class UserController(
     @GetMapping("/user-by-email")
     fun resultAllDataUser(@RequestBody @Valid email: UserEmailForm): UserView? = userService.getUserByEmail(email)
 
-    @PostMapping("/block-user")
-    fun blockUserByAdmin(@RequestBody @Valid userToBlock: UserToBlockForm): UserView = userService.blockUser(userToBlock)
+    @PutMapping("/block-user")
+    fun blockUserByAdmin(@RequestBody @Valid userToBlock: UserToBlockForm): String = userService.blockUser(userToBlock)
+
+    @PutMapping("/unblock-user")
+    fun unblockedUserByAdmin(@RequestBody @Valid userUnblock: UserToUnblockForm): String =
+        userService.unblockUser(userUnblock)
 }

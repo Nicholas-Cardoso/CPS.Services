@@ -7,7 +7,7 @@ import br.com.cps.forum.repository.UserRepository
 import org.springframework.stereotype.Component
 
 @Component
-class UserViewMapper(
+class UserMapper(
     private val userRepository: UserRepository
 ) : Mapper<User, UserView> {
 
@@ -18,6 +18,9 @@ class UserViewMapper(
             firstName = t.firstName,
             lastName = t.lastName,
             isBlockedUser = t.isBlockedUser,
+            blockByReason = t.blockByReason,
+            blockedBy = t.blockedBy,
+            unblockedBy = t.unblockedBy,
             role = t.getRoleNameByUserId(userRepository, t.id)
         )
     }

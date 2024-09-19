@@ -1,8 +1,8 @@
 package br.com.cps.forum.dto
 
-import org.jetbrains.annotations.NotNull
+import jakarta.validation.constraints.NotBlank
 
 data class UserEmailForm(
-    @field:NotNull("Email is required.")
+    @field:NotBlank(message = "Email is required.")
     val email: String
 )

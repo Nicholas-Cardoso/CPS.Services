@@ -1,5 +1,6 @@
 package br.com.cps.forum.model
 
+import br.com.cps.forum.model.enum.Reason
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import java.io.Serializable
@@ -13,9 +14,10 @@ data class User(
     val password: String,
     var firstName: String,
     var lastName: String,
-    val isBlockedUser: Boolean = false,
-    val reasonBlock: String? = null,
-    val blockedBy: String? = null,
+    var isBlockedUser: Boolean = false,
+    var blockByReason: Reason = Reason.CLEAN,
+    var blockedBy: String? = null,
+    var unblockedBy: String? = null,
 
     @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
@@ -25,4 +27,7 @@ data class User(
         inverseJoinColumns = [JoinColumn(name = "role_id")]
     )
     val role: List<Role> = mutableListOf()
-) : Serializable
+) : Serializable {
+    fun messageUserIsBlocked(blocked: Boolean, email: String): String =
+        if (blocked) "User '$email' is blocked!" else "User '$email' is unblocked!"
+}

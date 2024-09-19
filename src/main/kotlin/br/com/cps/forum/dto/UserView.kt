@@ -1,12 +1,15 @@
 package br.com.cps.forum.dto
 
+import br.com.cps.forum.model.enum.Reason
+
 data class UserView(
     val idGraph: Long?,
     val email: String,
     var firstName: String,
     var lastName: String,
     val isBlockedUser: Boolean,
-    val reasonBlock: String,
-    val blockedBy: String,
+    val blockByReason: Reason,
+    val blockedBy: String? = null,
+    val unblockedBy: String? = null,
     val role: List<String>?
 )
