@@ -39,6 +39,5 @@ class JWTLoginFilter(
         val leftToken = response?.writer
         leftToken?.write(ObjectMapper().writeValueAsString(tokenResponse))
         leftToken?.flush()
-//        response?.addHeader("Authorization", "Bearer $token")
     }
 }

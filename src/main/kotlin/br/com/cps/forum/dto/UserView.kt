@@ -8,7 +8,7 @@ data class UserView(
     var firstName: String,
     var lastName: String,
     val isBlockedUser: Boolean,
-    val blockByReason: Reason,
+    val blockByReason: Reason? = null,
     val blockedBy: String? = null,
     val unblockedBy: String? = null,
     val role: List<String>?

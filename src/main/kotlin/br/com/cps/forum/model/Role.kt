@@ -6,8 +6,7 @@ import org.springframework.security.core.GrantedAuthority
 
 @Entity
 data class Role(
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private val id: Long,
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) internal val id: Long,
     private val name: String,
 
     @JsonIgnore

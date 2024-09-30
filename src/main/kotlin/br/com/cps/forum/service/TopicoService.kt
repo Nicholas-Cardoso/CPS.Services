@@ -4,14 +4,18 @@ import br.com.cps.forum.dto.TopicosForm
 import br.com.cps.forum.dto.TopicosView
 import br.com.cps.forum.dto.UpdateTopicosForm
 import br.com.cps.forum.exception.NotFoundException
+import br.com.cps.forum.extension.checkAndSaveBrainAI
 import br.com.cps.forum.mapper.TopicosFormMapper
 import br.com.cps.forum.mapper.TopicosViewMapper
+import br.com.cps.forum.model.Role
 import br.com.cps.forum.model.Topicos
+import br.com.cps.forum.network.api.HashBrainService
 import br.com.cps.forum.network.api.MailService
 import br.com.cps.forum.repository.TopicoRepository
 import br.com.cps.forum.until.builderMailTopico
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import java.net.SocketTimeoutException
 import java.time.LocalDateTime
@@ -23,7 +27,8 @@ class TopicoService(
     private val repository: TopicoRepository,
     private val mapperToForm: TopicosFormMapper,
     private val mapperToView: TopicosViewMapper,
-    private val mailService: MailService
+    private val mailService: MailService,
+    private val brainService: HashBrainService
 ) {
     fun listTopicos(
         topicoName: String?,
@@ -42,15 +47,28 @@ class TopicoService(
     }
 
     fun createdTopicos(dtoTopico: TopicosForm): TopicosView {
-        val toMapper = mapperToForm.map(dtoTopico)
-        val created = repository.save(toMapper)
+        val authentication = SecurityContextHolder.getContext().authentication.authorities.first()
+        val userId = (authentication as Role).id
+
+        val toMapper = mapperToForm.map(dtoTopico, userId)
+
+        val created = checkAndSaveBrainAI(
+            brainService,
+            toMapper,
+            repository,
+            bodyExtractor = { appendStrings(it.title, it.body) })
+
         val topicView = mapperToView.map(created)
 
         try {
             val builder = builderMailTopico(created.user)
             mailService.sendMails(builder).execute()
         } catch (e: SocketTimeoutException) {
+            println("Timeout: ${e.message}")
+            throw e
+        } catch (e: Exception) {
             println(e.message)
+            throw e
         }
 
         return topicView
@@ -67,7 +85,13 @@ class TopicoService(
             existingTopico.tag = it.tag
             existingTopico.updated_at = LocalDateTime.now()
         }
-        repository.save(existingTopico)
+
+        checkAndSaveBrainAI(
+            brainService,
+            existingTopico,
+            repository,
+            bodyExtractor = { appendStrings(it.title, it.body) })
+
         return mapperToView.map(existingTopico)
     }
 
@@ -81,5 +105,14 @@ class TopicoService(
             .orElseThrow {
                 NotFoundException(notFoundMessage)
             }
+    }
+
+    private fun appendStrings(title: String, body: String): String {
+        return StringBuilder()
+            .append(title)
+            .append(" ")
+            .append(body)
+            .toString()
+
     }
 }

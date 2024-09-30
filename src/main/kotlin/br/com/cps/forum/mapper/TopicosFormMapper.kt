@@ -11,13 +11,17 @@ class TopicosFormMapper(
     private val userRepository: UserRepository
 ) : Mapper<TopicosForm, Topicos> {
     override fun map(t: TopicosForm): Topicos {
+        TODO("Not yet implemented")
+    }
+
+    fun map(t: TopicosForm, userId: Long): Topicos {
         return Topicos(
             title = t.title,
             privacy = t.privacy,
             section = t.section,
             body = t.body,
             tag = t.tag,
-            user = t.getUserById(userRepository, t.userId),
+            user = t.getUserById(userRepository, userId),
         )
     }
 }

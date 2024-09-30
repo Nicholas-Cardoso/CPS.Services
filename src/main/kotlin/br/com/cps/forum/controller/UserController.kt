@@ -4,6 +4,8 @@ import br.com.cps.forum.dto.UserEmailForm
 import br.com.cps.forum.dto.UserToBlockForm
 import br.com.cps.forum.dto.UserToUnblockForm
 import br.com.cps.forum.dto.UserView
+import br.com.cps.forum.extension.authEmails
+import br.com.cps.forum.repository.UserRepository
 import br.com.cps.forum.service.UserService
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.*
@@ -11,15 +13,15 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/user")
 class UserController(
-    private val userService: UserService
+    private val userService: UserService,
+    private val userRepository: UserRepository
 ) {
-    @GetMapping("/user-by-email")
+    @GetMapping("/by-email")
     fun resultAllDataUser(@RequestBody @Valid email: UserEmailForm): UserView? = userService.getUserByEmail(email)
 
     @PutMapping("/block-user")
     fun blockUserByAdmin(@RequestBody @Valid userToBlock: UserToBlockForm): String = userService.blockUser(userToBlock)
 
     @PutMapping("/unblock-user")
-    fun unblockedUserByAdmin(@RequestBody @Valid userUnblock: UserToUnblockForm): String =
-        userService.unblockUser(userUnblock)
+    fun unblockedUserByAdmin(@RequestBody @Valid userUnblock: UserToUnblockForm): String = userService.unblockUser(userUnblock)
 }

@@ -2,9 +2,7 @@ package br.com.cps.forum.extension
 
 import br.com.cps.forum.dto.AnswerForm
 import br.com.cps.forum.dto.TopicosForm
-import br.com.cps.forum.dto.UserView
 import br.com.cps.forum.exception.NotFoundException
-import br.com.cps.forum.model.Role
 import br.com.cps.forum.model.User
 import br.com.cps.forum.repository.UserRepository
 
@@ -24,7 +22,9 @@ fun TopicosForm.getUserById(userRepository: UserRepository, id: Long): User {
         }
 }
 
-fun User.getRoleNameByUserId(userRepository: UserRepository, id: Long?): List<String>? {
-    val user = userRepository.findUserById(id!!)
-    return user?.role?.map { it.getName() }
+fun authEmails(userEmail: String, adminEmail: String, repository: UserRepository): Boolean {
+    val userExists = repository.findByEmail(userEmail) != null
+    val adminExists = repository.findByEmail(adminEmail) != null
+
+    return userExists && adminExists
 }
