@@ -26,22 +26,24 @@ class SecurityConfiguration(
 ) {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+//        http.csrf { it.disable() }
+//            .authorizeHttpRequests { requests ->
+//                requests.requestMatchers("/user/**").hasAuthority("ADMIN")
+//                    .requestMatchers("/topicos").hasAuthority("USER")
+//                    .requestMatchers("/answer").hasAuthority("USER")
+//                    .requestMatchers(HttpMethod.POST, "/login").permitAll()
+//                    .anyRequest().authenticated()
+//            }
+//            .addFilterBefore(
+//                JWTLoginFilter(authenticationManager(bCryptPasswordEncoder()), jwtUtil),
+//                UsernamePasswordAuthenticationFilter::class.java
+//            )
+//            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+//            .sessionManagement {
+//                it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//            }
         http.csrf { it.disable() }
-            .authorizeHttpRequests { requests ->
-                requests.requestMatchers("/user/**").hasAuthority("ADMIN")
-                    .requestMatchers("/topicos").hasAuthority("USER")
-                    .requestMatchers("/answer").hasAuthority("USER")
-                    .requestMatchers(HttpMethod.POST, "/login").permitAll()
-                    .anyRequest().authenticated()
-            }
-            .addFilterBefore(
-                JWTLoginFilter(authenticationManager(bCryptPasswordEncoder()), jwtUtil),
-                UsernamePasswordAuthenticationFilter::class.java
-            )
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
-            .sessionManagement {
-                it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            }
+            .authorizeHttpRequests { it.anyRequest().permitAll() }
         return http.build()
     }
 

@@ -12,8 +12,8 @@ spring:
         format_sql: true
 service:
   mail:
-    url: http://localhost:8081/
+    url:
   brainAI:
-    url: http://localhost:8082/
+    url:
 jwt:
-  secret: d3c21d2d9fcf37e07d7fd52fe6009f1830058ef46d3a082d3cc90e4d01f93f76271e5dfbfd2fed063a99b4f3c14c2058e84c307a14d8065dd91e078aa9134468
+  secret:

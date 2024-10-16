@@ -7,7 +7,6 @@ import br.com.cps.forum.exception.NotFoundException
 import br.com.cps.forum.extension.checkAndSaveBrainAI
 import br.com.cps.forum.mapper.TopicosFormMapper
 import br.com.cps.forum.mapper.TopicosViewMapper
-import br.com.cps.forum.model.Role
 import br.com.cps.forum.model.Topicos
 import br.com.cps.forum.network.api.HashBrainService
 import br.com.cps.forum.network.api.MailService
@@ -15,7 +14,6 @@ import br.com.cps.forum.repository.TopicoRepository
 import br.com.cps.forum.until.builderMailTopico
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import java.net.SocketTimeoutException
 import java.time.LocalDateTime
@@ -35,7 +33,7 @@ class TopicoService(
         page: Pageable
     ): Page<TopicosView> {
         val topicos = topicoName?.let {
-            repository.findByTitle(topicoName, page)
+            repository.findByTitleContaining(topicoName, page)
         } ?: repository.findAll(page)
 
         return mapperToView.mapToPage(topicos)
@@ -47,10 +45,10 @@ class TopicoService(
     }
 
     fun createdTopicos(dtoTopico: TopicosForm): TopicosView {
-        val authentication = SecurityContextHolder.getContext().authentication.authorities.first()
-        val userId = (authentication as Role).id
+//        val authentication = SecurityContextHolder.getContext().authentication.authorities.first()
+//        val userId = (authentication as Role).id
 
-        val toMapper = mapperToForm.map(dtoTopico, userId)
+        val toMapper = mapperToForm.map(dtoTopico)
 
         val created = checkAndSaveBrainAI(
             brainService,
@@ -61,7 +59,10 @@ class TopicoService(
         val topicView = mapperToView.map(created)
 
         try {
-            val builder = builderMailTopico(created.user)
+            val listEmail = mutableListOf<String>()
+            listEmail.add(created.user.email)
+
+            val builder = builderMailTopico(listEmail, created.user)
             mailService.sendMails(builder).execute()
         } catch (e: SocketTimeoutException) {
             println("Timeout: ${e.message}")

@@ -14,7 +14,7 @@ import java.util.*
 class JWTUtil(
     private val userService: UserService
 ) {
-    private val expiration: Long = 300000
+    private val expiration: Long = 604800000L
 
     @Value("\${jwt.secret}")
     private lateinit var secret: String

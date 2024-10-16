@@ -14,13 +14,9 @@ class AnswerFormMapper(
     private val userRepository: UserRepository
 ) : Mapper<AnswerForm, Answers> {
     override fun map(t: AnswerForm): Answers {
-        TODO("Not yet implemented")
-    }
-
-    fun map(t: AnswerForm, userId: Long): Answers {
         return Answers(
             topico = t.getTopicoById(topicoRepository, t.topicoId),
-            user = t.getUserById(userRepository, userId),
+            user = t.getUserById(userRepository, t.userId),
             answerBody = t.answerBody
         )
     }

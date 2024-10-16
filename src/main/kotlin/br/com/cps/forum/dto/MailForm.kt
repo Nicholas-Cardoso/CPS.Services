@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class MailForm(
     @SerializedName("recipientMail")
-    val email: String,
+    val email: List<String>,
     val subject: String,
     val body: String
 )

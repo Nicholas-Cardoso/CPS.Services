@@ -56,8 +56,8 @@ class AnswerService(
 
     @Throws(NotFoundException::class)
     fun createAnswer(answerForm: AnswerForm, parentId: Long?): AnswerView {
-        val authentication = SecurityContextHolder.getContext().authentication.authorities.first()
-        val userId = (authentication as Role).id
+//        val authentication = SecurityContextHolder.getContext().authentication.authorities.first()
+//        val userId = (authentication as Role).id
 
         when {
             parentId != null -> {
@@ -67,7 +67,7 @@ class AnswerService(
                 }
                 val answers = Answers(
                     topico = answerForm.getTopicoById(topicoRepository, answerForm.topicoId),
-                    user = answerForm.getUserById(userRepository, userId),
+                    user = answerForm.getUserById(userRepository, answerForm.userId),
                     answerBody = answerForm.answerBody,
                     answerFather = parentAnswer
                 )
@@ -79,7 +79,7 @@ class AnswerService(
             }
 
             else -> {
-                val answer = mapperToForm.map(answerForm, userId)
+                val answer = mapperToForm.map(answerForm)
                 val answerCreated =
                     checkAndSaveBrainAI(brainService, answer, repository, bodyExtractor = { it.answerBody })
                 return mapperToView.mapToAnswer(answerCreated)
