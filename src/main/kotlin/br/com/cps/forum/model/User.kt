@@ -1,5 +1,6 @@
 package br.com.cps.forum.model
 
+import br.com.cps.forum.extension.transformNameToSlug
 import br.com.cps.forum.model.enum.Reason
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
@@ -14,6 +15,7 @@ data class User(
     val password: String,
     var firstName: String,
     var lastName: String,
+    var slug: String = transformNameToSlug(firstName, lastName),
     var isBlockedUser: Boolean = false,
     var blockByReason: Reason = Reason.CLEAN,
     var blockedBy: String? = null,

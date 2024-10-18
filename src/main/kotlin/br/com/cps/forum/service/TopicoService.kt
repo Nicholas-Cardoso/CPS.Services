@@ -16,7 +16,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.net.SocketTimeoutException
-import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 private const val notFoundMessage: String = "Tópico não encontrado."
 
@@ -84,7 +85,7 @@ class TopicoService(
             existingTopico.section = it.section
             existingTopico.body = it.body
             existingTopico.tag = it.tag
-            existingTopico.updated_at = LocalDateTime.now()
+            existingTopico.updatedAt = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo"))
         }
 
         checkAndSaveBrainAI(

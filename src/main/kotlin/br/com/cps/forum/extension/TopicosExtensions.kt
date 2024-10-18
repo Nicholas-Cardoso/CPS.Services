@@ -13,3 +13,17 @@ fun AnswerForm.getTopicoById(topicosRepository: TopicoRepository, id: Long): Top
             NotFoundException(notFound)
         }
 }
+
+fun transformTitleToSlug(title: String): String {
+    return title
+        .lowercase()
+        .replace(Regex("[áàãâä]"), "a")
+        .replace(Regex("[éèêë]"), "e")
+        .replace(Regex("[íìîï]"), "i")
+        .replace(Regex("[óòõôö]"), "o")
+        .replace(Regex("[úùûü]"), "u")
+        .replace(Regex("[ç]"), "c")
+        .replace(Regex("[^a-z0-9\\s]"), "")
+        .replace("\\s+".toRegex(), "-")
+        .trim('-')
+}

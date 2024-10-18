@@ -28,3 +28,19 @@ fun authEmails(userEmail: String, adminEmail: String, repository: UserRepository
 
     return userExists && adminExists
 }
+
+fun transformNameToSlug(firstName: String, lastName: String): String {
+    val fullName = "$firstName $lastName"
+
+    return fullName
+        .lowercase()
+        .replace(Regex("[áàãâä]"), "a")
+        .replace(Regex("[éèêë]"), "e")
+        .replace(Regex("[íìîï]"), "i")
+        .replace(Regex("[óòõôö]"), "o")
+        .replace(Regex("[úùûü]"), "u")
+        .replace(Regex("[ç]"), "c")
+        .replace(Regex("[^a-z0-9\\s]"), "")
+        .replace("\\s+".toRegex(), "-")
+        .trim('-')
+}
