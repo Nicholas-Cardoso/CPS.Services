@@ -38,7 +38,7 @@ class TopicosViewMapper(
             TopicosView(
                 id = topico.id,
                 title = topico.title,
-                slug = topico.slug,
+                slug = transformTitleToSlug(topico.title),
                 privacy = topico.privacy,
                 section = topico.section,
                 body = topico.body,
