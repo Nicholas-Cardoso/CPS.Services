@@ -7,5 +7,6 @@ data class AnswersView(
     val answerBody: String,
     val topicoId: Long?,
     val userId: Long?,
-    val answerChild: List<AnswersView> = mutableListOf()
+    val answerChild: List<AnswersView> = mutableListOf(),
+    val votes: Int = 0
 ) : Serializable

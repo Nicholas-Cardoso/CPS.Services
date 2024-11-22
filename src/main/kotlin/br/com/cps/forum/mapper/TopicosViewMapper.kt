@@ -26,6 +26,7 @@ class TopicosViewMapper(
             tag = t.tag,
             answer = answersToList.toList(),
             user = t.user,
+            votes = t.calculateQuantityVotes(),
             createdAt = t.createdAt,
             updatedAt = t.updatedAt
         )
@@ -45,6 +46,7 @@ class TopicosViewMapper(
                 tag = topico.tag,
                 answer = answersToList.toList(),
                 user = topico.user,
+                votes = topico.calculateQuantityVotes(),
                 createdAt = topico.createdAt,
                 updatedAt = topico.updatedAt
             )

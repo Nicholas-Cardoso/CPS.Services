@@ -23,6 +23,13 @@ data class Topicos(
     @OneToMany(mappedBy = "topico", cascade = [CascadeType.ALL], orphanRemoval = true)
     @JsonIgnore
     val answer: List<Answers>? = null,
+    var positiveVotes: Int = 0,
+    var negativeVotes: Int = 0,
     val createdAt: ZonedDateTime = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")),
     var updatedAt: ZonedDateTime = ZonedDateTime.now(ZoneId.of("America/Sao_Paulo")),
-) : Serializable
+) : Serializable {
+
+    fun calculateQuantityVotes(): Int {
+        return positiveVotes - negativeVotes
+    }
+}

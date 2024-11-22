@@ -12,7 +12,8 @@ class AnswerViewMapper : Mapper<Answers, AnswersView> {
             id = t.id,
             answerBody = t.answerBody,
             topicoId = t.topico.id,
-            userId = t.user.id
+            userId = t.user.id,
+            votes = t.calculateQuantityVotes()
         )
     }
 
@@ -22,7 +23,8 @@ class AnswerViewMapper : Mapper<Answers, AnswersView> {
             answerBody = t.answerBody,
             topico = t.topico,
             user = t.user,
-            answerChild = t.answerChild
+            answerChild = t.answerChild,
+            votes = t.calculateQuantityVotes()
         )
     }
 }
