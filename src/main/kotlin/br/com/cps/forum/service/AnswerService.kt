@@ -8,7 +8,6 @@ import br.com.cps.forum.extension.getUserById
 import br.com.cps.forum.mapper.AnswerFormMapper
 import br.com.cps.forum.mapper.AnswerViewMapper
 import br.com.cps.forum.model.Answers
-import br.com.cps.forum.model.Role
 import br.com.cps.forum.network.api.HashBrainService
 import br.com.cps.forum.repository.AnswerRepository
 import br.com.cps.forum.repository.TopicoRepository
@@ -17,7 +16,6 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 
 private const val notFound: String = "Resposta não encontrada."

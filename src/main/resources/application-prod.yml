@@ -15,5 +15,3 @@ service:
     url:
   brainAI:
     url:
-jwt:
-  secret:

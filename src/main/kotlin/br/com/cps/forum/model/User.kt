@@ -10,12 +10,10 @@ import java.io.Serializable
 data class User(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
-    val idGraph: Long? = null,
+    val oId: String,
     val email: String,
-    val password: String,
-    var firstName: String,
-    var lastName: String,
-    var slug: String = transformNameToSlug(firstName, lastName),
+    val name: String,
+    var slug: String = transformNameToSlug(name),
     var isBlockedUser: Boolean = false,
     var blockByReason: Reason = Reason.CLEAN,
     var blockedBy: String? = null,

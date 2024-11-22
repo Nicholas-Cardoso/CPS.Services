@@ -9,7 +9,7 @@ class UserDetail(
 ) : UserDetails {
     override fun getAuthorities(): Collection<GrantedAuthority> = user.role
 
-    override fun getPassword(): String = user.password
+    override fun getPassword(): String = user.slug
 
     override fun getUsername(): String = user.email
 

@@ -5,14 +5,14 @@ import br.com.cps.forum.model.User
 import org.springframework.stereotype.Component
 
 @Component
-class UserMapper() : Mapper<User, UserView> {
+class UserMapper : Mapper<User, UserView> {
 
     override fun map(t: User): UserView {
         return UserView(
-            idGraph = t.idGraph,
+            oId = t.oId,
             email = t.email,
-            firstName = t.firstName,
-            lastName = t.lastName,
+            name = t.name,
+            slug = t.slug,
             isBlockedUser = t.isBlockedUser,
             blockByReason = t.blockByReason,
             blockedBy = t.blockedBy,

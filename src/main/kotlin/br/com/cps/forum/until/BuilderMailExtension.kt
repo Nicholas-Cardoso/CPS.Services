@@ -8,7 +8,7 @@ fun builderMailTopico(listEmail: List<String>, model: User): MailForm {
         email = listEmail,
         subject = "Confirmação de Nova Postagem no CPS Fórum",
         body = """
-        Olá ${model.firstName} ${model.lastName},
+        Olá ${model.name},
         
         Parabéns! Estamos felizes em informar que você acabou de criar um novo tópico no nosso fórum, o CPS Fórum. É ótimo ver você compartilhando seus conhecimentos e contribuindo para a nossa comunidade.
         

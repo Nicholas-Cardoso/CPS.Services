@@ -16,14 +16,10 @@ class TopicosViewMapper(
     override fun map(t: Topicos): TopicosView {
         val answersToList = answer.listAnswers(t.id)
 
-        if (t.user.slug.isNullOrBlank()) {
-            t.user.slug = transformNameToSlug(t.user.firstName, t.user.lastName)
-        }
-
         return TopicosView(
             id = t.id,
             title = t.title,
-            slug = transformTitleToSlug(t.title),
+            slug = t.slug,
             privacy = t.privacy,
             section = t.section,
             body = t.body,
@@ -38,14 +34,11 @@ class TopicosViewMapper(
     fun mapToPage(t: Page<Topicos>): Page<TopicosView> {
         val topicosViewList = t.content.map { topico ->
             val answersToList = answer.listAnswers(topico.id)
-            if (topico.user.slug.isNullOrBlank()) {
-                topico.user.slug = transformNameToSlug(topico.user.firstName, topico.user.lastName)
-            }
 
             TopicosView(
                 id = topico.id,
                 title = topico.title,
-                slug = transformTitleToSlug(topico.title),
+                slug = topico.slug,
                 privacy = topico.privacy,
                 section = topico.section,
                 body = topico.body,

@@ -24,9 +24,9 @@ fun <T : Any> checkAndSaveBrainAI(
 
             if (result != false) {
                 throw NotSafeSpeechException(notSafeSpeech)
+            } else {
+                repository.save(entity)
             }
-
-            repository.save(entity)
         } else {
             throw Exception("API Request Error: ${responseContext.errorBody()?.string()}")
         }

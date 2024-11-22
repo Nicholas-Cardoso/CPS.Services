@@ -3,40 +3,60 @@ package br.com.cps.forum.service
 import br.com.cps.forum.dto.UserEmailForm
 import br.com.cps.forum.dto.UserToBlockForm
 import br.com.cps.forum.dto.UserToUnblockForm
-import br.com.cps.forum.dto.UserView
 import br.com.cps.forum.exception.NotFoundException
+import br.com.cps.forum.exception.UnauthorizedException
 import br.com.cps.forum.extension.authEmails
+import br.com.cps.forum.extension.getCurrentJwtAuthentication
 import br.com.cps.forum.mapper.UserMapper
 import br.com.cps.forum.model.User
 import br.com.cps.forum.model.enum.Reason
 import br.com.cps.forum.repository.UserRepository
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
 
 private const val message: String = "User not found."
+private const val notFoundEmailUser: String = "Email not found in JWT."
+private const val notFoundOIdUser: String = "OID not found in JWT."
+private const val notFoundNameUser: String = "Name not found in JWT."
 
 @Service
 class UserService(
     private val repository: UserRepository,
     private val userMapper: UserMapper,
 ) : UserDetailsService {
-
     override fun loadUserByUsername(username: String?): UserDetails {
         val user = repository.findByEmail(username) ?: throw RuntimeException()
         return UserDetail(user)
     }
 
-    fun getUserByEmail(user: UserEmailForm): UserView? {
+    fun getUserByEmail(user: UserEmailForm): Any {
         return repository.findByEmail(user.email)?.let {
             userMapper.map(it)
-        }
+        } ?: return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message)
     }
 
-    fun getById(id: Long): User {
-        return repository.findById(id).orElseThrow {
-            NotFoundException(message)
+    fun createUser(): ResponseEntity<Any> {
+        getCurrentJwtAuthentication()?.let {
+            val userExists = repository.findByEmail(it.getEmail())
+            if (userExists == null) {
+                val createUser = User(
+                    oId = it.getOid() ?: throw NotFoundException(notFoundOIdUser),
+                    email = it.getEmail() ?: throw NotFoundException(notFoundEmailUser),
+                    name = it.name ?: throw NotFoundException(notFoundNameUser)
+                )
+
+                repository.save(createUser)
+                return ResponseEntity.status(HttpStatus.CREATED).body(createUser)
+            } else {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("User with email ${it.getEmail()} already exists")
+            }
         }
+
+        throw UnauthorizedException("Authentication not found")
     }
 
     fun blockUser(userToBlock: UserToBlockForm): String {
@@ -65,5 +85,11 @@ class UserService(
             unblockedBy = userUnblock.adminEmail
         )
         return repository.save(oldUser!!).messageUserIsBlocked(false, userUnblock.userEmail)
+    }
+
+    fun getById(id: Long): User {
+        return repository.findById(id).orElseThrow {
+            NotFoundException(message)
+        }
     }
 }
