@@ -16,7 +16,7 @@ data class TopicosView(
     val tag: String,
     val answer: List<AnswersView>,
     val user: User,
-    val votes: Int = 0,
+    val votes: Int? = 0,
     val createdAt: ZonedDateTime,
     var updatedAt: ZonedDateTime
 ) : Serializable

@@ -3,6 +3,7 @@ package br.com.cps.forum.controller
 import br.com.cps.forum.dto.UserEmailForm
 import br.com.cps.forum.dto.UserToBlockForm
 import br.com.cps.forum.dto.UserToUnblockForm
+import br.com.cps.forum.dto.UserView
 import br.com.cps.forum.model.User
 import br.com.cps.forum.repository.UserRepository
 import br.com.cps.forum.service.UserService
@@ -16,7 +17,7 @@ class UserController(
     private val userRepository: UserRepository
 ) {
     @GetMapping("/all-users")
-    fun getAllUsersActives(): MutableList<User> = userRepository.findAll()
+    fun getAllUsersActives(): List<UserView> = userService.getAllUsers()
 
     @GetMapping("/by-email")
     fun resultAllDataUser(@RequestBody @Valid email: UserEmailForm) = userService.getUserByEmail(email)

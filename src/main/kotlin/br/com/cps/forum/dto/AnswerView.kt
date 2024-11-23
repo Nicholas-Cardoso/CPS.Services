@@ -11,5 +11,5 @@ data class AnswerView(
     val topico: Topicos,
     val user: User,
     val answerChild: MutableList<Answers> = mutableListOf(),
-    val votes: Int = 0
+    val votes: Int? = 0
 ) : Serializable

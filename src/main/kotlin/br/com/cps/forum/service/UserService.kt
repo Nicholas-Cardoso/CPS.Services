@@ -3,6 +3,7 @@ package br.com.cps.forum.service
 import br.com.cps.forum.dto.UserEmailForm
 import br.com.cps.forum.dto.UserToBlockForm
 import br.com.cps.forum.dto.UserToUnblockForm
+import br.com.cps.forum.dto.UserView
 import br.com.cps.forum.exception.NotFoundException
 import br.com.cps.forum.exception.UnauthorizedException
 import br.com.cps.forum.extension.authEmails
@@ -30,6 +31,11 @@ class UserService(
     override fun loadUserByUsername(username: String?): UserDetails {
         val user = repository.findByEmail(username) ?: throw RuntimeException()
         return UserDetail(user)
+    }
+
+    fun getAllUsers(): List<UserView> {
+        val users = repository.findAll()
+        return userMapper.mapperUserAllToView(users)
     }
 
     fun getUserByEmail(user: UserEmailForm): Any {

@@ -8,5 +8,5 @@ data class AnswersView(
     val topicoId: Long?,
     val userId: Long?,
     val answerChild: List<AnswersView> = mutableListOf(),
-    val votes: Int = 0
+    val votes: Int? = 0
 ) : Serializable

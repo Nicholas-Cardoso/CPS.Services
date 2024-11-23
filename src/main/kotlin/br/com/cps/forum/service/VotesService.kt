@@ -1,53 +1,104 @@
 package br.com.cps.forum.service
 
-import br.com.cps.forum.dto.AnswersView
-import br.com.cps.forum.dto.TopicosView
 import br.com.cps.forum.dto.VotesForm
-import br.com.cps.forum.mapper.AnswerViewMapper
-import br.com.cps.forum.mapper.TopicosViewMapper
-import br.com.cps.forum.model.enum.PostType
+import br.com.cps.forum.exception.NotFoundException
+import br.com.cps.forum.model.Answers
+import br.com.cps.forum.model.Topicos
+import br.com.cps.forum.model.User
+import br.com.cps.forum.model.Votes
 import br.com.cps.forum.model.enum.VoteType
 import br.com.cps.forum.repository.AnswerRepository
 import br.com.cps.forum.repository.TopicoRepository
+import br.com.cps.forum.repository.UserRepository
+import br.com.cps.forum.repository.VotesRepository
 import org.springframework.stereotype.Service
 
 @Service
 class VotesService(
+    private val votesRepository: VotesRepository,
     private val topicosRepository: TopicoRepository,
     private val answerRepository: AnswerRepository,
-    private val mapperTopicosToView: TopicosViewMapper,
-    private val mapperAnswersToView: AnswerViewMapper
+    private val userRepository: UserRepository,
 ) {
+    fun voteOnTopico(topicoId: Long, votesForm: VotesForm) {
+        val topico = topicosRepository.findById(topicoId)
+            .orElseThrow { NotFoundException("O tópico não existe.") }
+        val user = userRepository.findById(votesForm.userId)
+            .orElseThrow { NotFoundException("O usuário não existe.") }
 
-    fun countingVotesToTopicsOrAnswers(modalVotes: VotesForm) {
-        when (modalVotes.postType) {
-            PostType.TOPICO -> updateTopicoVotes(modalVotes)
-            PostType.ANSWER -> updateAnswerVotes(modalVotes)
-            else -> throw IllegalArgumentException("Tipo de post desconhecido.")
+        handleVote(
+            user = user,
+            topico = topico,
+            answer = null,
+            votesForm = votesForm
+        )
+    }
+
+    fun voteOnAnswer(answerId: Long, votesForm: VotesForm) {
+        val answer = answerRepository.findById(answerId)
+            .orElseThrow { NotFoundException("A resposta não existe.") }
+        val user = userRepository.findById(votesForm.userId)
+            .orElseThrow { NotFoundException("O usuário não existe.") }
+
+        handleVote(
+            user = user,
+            topico = null,
+            answer = answer,
+            votesForm = votesForm
+        )
+    }
+
+    private fun handleVote(user: User, topico: Topicos?, answer: Answers?, votesForm: VotesForm) {
+        val voteEntity = if (topico != null) {
+            votesRepository.findByUser_IdAndTopicos_Id(user.id!!, topico.id!!)
+        } else {
+            votesRepository.findByUser_IdAndAnswers_Id(user.id!!, answer!!.id!!)
+        }
+
+        if (voteEntity != null) {
+            updateVote(voteEntity, votesForm)
+        } else {
+            val newVote = createNewVote(user, topico, answer)
+            updateVote(newVote, votesForm)
         }
     }
 
-    private fun updateTopicoVotes(modalVotes: VotesForm): TopicosView {
-        val findTopico = topicosRepository.findById(modalVotes.topicoId!!)
-            .orElseThrow { IllegalArgumentException("Tópico não encontrado.") }
-        when (modalVotes.voteType) {
-            VoteType.POSITIVE -> findTopico.positiveVotes++
-            VoteType.NEGATIVE -> findTopico.negativeVotes++
-        }
-
-        topicosRepository.save(findTopico)
-        return mapperTopicosToView.map(findTopico)
+    private fun createNewVote(user: User, topico: Topicos?, answer: Answers?): Votes {
+        val newVote = Votes(
+            user = user,
+            topicos = topico,
+            answers = answer,
+            positiveVotes = 0,
+            negativeVotes = 0,
+            hasVoted = true
+        )
+        return votesRepository.save(newVote)
     }
 
-    private fun updateAnswerVotes(modalVotes: VotesForm): AnswersView {
-        val findAnswer = answerRepository.findById(modalVotes.answerId!!)
-            .orElseThrow { IllegalArgumentException("Answer não encontrado.") }
-        when (modalVotes.voteType) {
-            VoteType.POSITIVE -> findAnswer.positiveVotes++
-            VoteType.NEGATIVE -> findAnswer.negativeVotes++
-        }
+    private fun updateVote(voteEntity: Votes, votesForm: VotesForm) {
+        when (votesForm.voteType) {
+            VoteType.UPVOTE -> {
+                if (voteEntity.positiveVotes == 1) {
+                    voteEntity.positiveVotes = 0
+                } else if (voteEntity.negativeVotes == 1) {
+                    voteEntity.positiveVotes = 1
+                    voteEntity.negativeVotes = 0
+                } else {
+                    voteEntity.positiveVotes = 1
+                }
+            }
 
-        answerRepository.save(findAnswer)
-        return mapperAnswersToView.map(findAnswer)
+            VoteType.DOWNVOTE -> {
+                if (voteEntity.negativeVotes == 1) {
+                    voteEntity.negativeVotes = 0
+                } else if (voteEntity.positiveVotes == 1) {
+                    voteEntity.negativeVotes = 1
+                    voteEntity.positiveVotes = 0
+                } else {
+                    voteEntity.negativeVotes = 1
+                }
+            }
+        }
+        votesRepository.save(voteEntity)
     }
 }
