@@ -3,6 +3,7 @@ package br.com.cps.forum.dto
 import br.com.cps.forum.model.enum.Reason
 
 data class UserView(
+    val id: Long,
     val oId: String?,
     val email: String?,
     var name: String?,

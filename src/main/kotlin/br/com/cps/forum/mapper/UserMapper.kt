@@ -12,6 +12,7 @@ class UserMapper(
 
     override fun map(t: User): UserView {
         return UserView(
+            id = t.id!!,
             oId = t.oId,
             email = t.email,
             name = t.name,
@@ -21,13 +22,14 @@ class UserMapper(
             blockedBy = t.blockedBy,
             unblockedBy = t.unblockedBy,
             role = t.role.map { it.getName() },
-            totalVotes = votesRepository.countTotalVotesForUser(t.id!!)
+            totalVotes = votesRepository.countTotalVotesForUser(t.id)
         )
     }
 
     fun mapperUserAllToView(t: List<User>): List<UserView> {
         return t.map { user ->
             UserView(
+                id = user.id!!,
                 oId = user.oId,
                 email = user.email,
                 name = user.name,
@@ -37,7 +39,7 @@ class UserMapper(
                 blockedBy = user.blockedBy,
                 unblockedBy = user.unblockedBy,
                 role = user.role.map { it.getName() },
-                totalVotes = votesRepository.countTotalVotesForUser(user.id!!)
+                totalVotes = votesRepository.countTotalVotesForUser(user.id)
             )
         }
     }

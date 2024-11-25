@@ -4,7 +4,6 @@ import br.com.cps.forum.dto.UserEmailForm
 import br.com.cps.forum.dto.UserToBlockForm
 import br.com.cps.forum.dto.UserToUnblockForm
 import br.com.cps.forum.dto.UserView
-import br.com.cps.forum.model.User
 import br.com.cps.forum.repository.UserRepository
 import br.com.cps.forum.service.UserService
 import jakarta.validation.Valid

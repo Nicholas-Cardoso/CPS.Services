@@ -79,23 +79,23 @@ class VotesService(
         when (votesForm.voteType) {
             VoteType.UPVOTE -> {
                 if (voteEntity.positiveVotes == 1) {
-                    voteEntity.positiveVotes = 0
+                    voteEntity.positiveVotes--
                 } else if (voteEntity.negativeVotes == 1) {
-                    voteEntity.positiveVotes = 1
-                    voteEntity.negativeVotes = 0
+                    voteEntity.positiveVotes++
+                    voteEntity.negativeVotes--
                 } else {
-                    voteEntity.positiveVotes = 1
+                    voteEntity.positiveVotes++
                 }
             }
 
             VoteType.DOWNVOTE -> {
                 if (voteEntity.negativeVotes == 1) {
-                    voteEntity.negativeVotes = 0
+                    voteEntity.negativeVotes--
                 } else if (voteEntity.positiveVotes == 1) {
-                    voteEntity.negativeVotes = 1
-                    voteEntity.positiveVotes = 0
+                    voteEntity.negativeVotes++
+                    voteEntity.positiveVotes--
                 } else {
-                    voteEntity.negativeVotes = 1
+                    voteEntity.negativeVotes++
                 }
             }
         }
