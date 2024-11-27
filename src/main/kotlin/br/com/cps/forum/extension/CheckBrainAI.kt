@@ -15,21 +15,22 @@ fun <T : Any> checkAndSaveBrainAI(
     bodyExtractor: (T) -> String
 ): T {
     return try {
-        val responseContext = brainService.checkSafeSpeech(
-            Speech(bodyExtractor(entity))
-        ).execute()
-
-        if (responseContext.isSuccessful) {
-            val result = responseContext.body()
-
-            if (result != false) {
-                throw NotSafeSpeechException(notSafeSpeech)
-            } else {
-                repository.save(entity)
-            }
-        } else {
-            throw Exception("API Request Error: ${responseContext.errorBody()?.string()}")
-        }
+//        val responseContext = brainService.checkSafeSpeech(
+//            Speech(bodyExtractor(entity))
+//        ).execute()
+//
+//        if (responseContext.isSuccessful) {
+//            val result = responseContext.body()
+//
+//            if (result != false) {
+//                throw NotSafeSpeechException(notSafeSpeech)
+//            } else {
+//                repository.save(entity)
+//            }
+//        } else {
+//            throw Exception("API Request Error: ${responseContext.errorBody()?.string()}")
+//        }
+        repository.save(entity)
     } catch (e: SocketTimeoutException) {
         println("Timeout: ${e.message}")
         throw e

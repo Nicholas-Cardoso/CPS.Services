@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface TopicoRepository : JpaRepository<Topicos, Long> {
     fun findByTitleContaining(nome: String, page: Pageable): Page<Topicos>
+
+    fun findBySection(section: String, pageable: Pageable): Page<Topicos>
 }

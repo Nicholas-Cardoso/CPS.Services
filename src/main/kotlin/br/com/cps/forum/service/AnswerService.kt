@@ -12,6 +12,7 @@ import br.com.cps.forum.network.api.HashBrainService
 import br.com.cps.forum.repository.AnswerRepository
 import br.com.cps.forum.repository.TopicoRepository
 import br.com.cps.forum.repository.UserRepository
+import br.com.cps.forum.repository.VotesRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
@@ -26,6 +27,7 @@ class AnswerService(
     private val repository: AnswerRepository,
     private val userRepository: UserRepository,
     private val topicoRepository: TopicoRepository,
+    private val votesRepository: VotesRepository,
     private val mapperToView: AnswerViewMapper,
     private val mapperToForm: AnswerFormMapper,
     private val brainService: HashBrainService
@@ -114,7 +116,8 @@ class AnswerService(
                         answerBody = child.answerBody,
                         topicoId = child.topico.id,
                         userId = child.user.id,
-                        answerChild = answerChild
+                        answerChild = answerChild,
+                        votes = votesRepository.countVotesForAnswers(child.id)
                     )
                 )
             }

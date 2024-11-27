@@ -19,7 +19,7 @@ class SecurityConfiguration {
         http.cors { it.configurationSource(corsConfigurationSource()) }
             .csrf { it.disable() }
             .authorizeHttpRequests {
-                it.anyRequest().authenticated()
+                it.anyRequest().permitAll()
             }
             .addFilterBefore(JWTAuthenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
         return http.build()

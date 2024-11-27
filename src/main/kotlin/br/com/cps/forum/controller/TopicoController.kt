@@ -3,6 +3,7 @@ package br.com.cps.forum.controller
 import br.com.cps.forum.dto.TopicosForm
 import br.com.cps.forum.dto.TopicosView
 import br.com.cps.forum.dto.UpdateTopicosForm
+import br.com.cps.forum.model.Topicos
 import br.com.cps.forum.service.TopicoService
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
@@ -25,6 +26,14 @@ class TopicoController(
     @GetMapping("/{id}")
     fun getTopicosById(@PathVariable id: Long): TopicosView {
         return service.getById(id)
+    }
+
+    @GetMapping("/by-section")
+    fun getTopicoBySection(
+        @RequestParam(required = true) section: String,
+        pageable: Pageable
+    ): Page<Topicos> {
+        return service.getTopicosBySection(section, pageable)
     }
 
     @PostMapping

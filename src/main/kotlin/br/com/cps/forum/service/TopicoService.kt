@@ -64,7 +64,7 @@ class TopicoService(
             listEmail.add(created.user.email)
 
             val builder = builderMailTopico(listEmail, created.user)
-            mailService.sendMails(builder).execute()
+//            mailService.sendMails(builder).execute()
         } catch (e: SocketTimeoutException) {
             println("Timeout: ${e.message}")
             throw e
@@ -74,6 +74,10 @@ class TopicoService(
         }
 
         return topicView
+    }
+
+    fun getTopicosBySection(sectionToSearch: String, page: Pageable): Page<Topicos> {
+        return repository.findBySection(sectionToSearch, page)
     }
 
     fun updatedTopico(dtoTopico: UpdateTopicosForm): TopicosView {
